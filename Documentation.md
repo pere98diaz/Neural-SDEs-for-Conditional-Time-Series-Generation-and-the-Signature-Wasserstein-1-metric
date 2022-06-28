@@ -129,7 +129,7 @@ and it returns:
 - `G_optimizer, C_optimizer`: the final state of the optimizers, in case one wants to keep training the model.
           
 ### Training the LSTM CSig-WGAN
-To train the LSTM model with the CSig-WGAN algorithm we need the following functions, depending on the 
+To train the LSTM model with the CSig-WGAN algorithm we need the following functions, 
 ```python
 from lib.Training_sigwgan import train_sigwgan
 G, G_optimizer = train_sigwgan(G, sig_Y, dataloader_tr, dataloader_val, dataloader_ts, hp, X_data, Y_data, G_optimizer, 
@@ -157,15 +157,18 @@ and it returns:
 - `G`: the generator trained.
 - `G_optimizer`: the final state of the optimizer, in case one wants to keep training the model.
 
-
-
-
-
-
-
-
-
-
+### Training the NSDE CSig-WGAN
+To train the NSDE model with the CSig-WGAN algorithm we need the following function, 
+```python
+from lib.Training_NSDE_sigwgan import train_sigwgan
+G, G_optimizer = train_sigwgan(G, sig_Y, dataloader_tr, dataloader_val, dataloader_ts, hp, signatures_X, X_data, Y_data, G_optimizer, 
+                               patience=10000, epsilon=0, max_time = None, device='cuda')
+```
+where the arguments descriptions are exactly the same as the ones we explained in the Training the LSTM CSig-WGAN section, with only one addicional argument and some minor changes:
+- `signatures_X`: truncated signatures for the codification of the input paths.
+- `dataloader_tr`: the dataloader with the training data. It needs to have the form `(signatures_x, data_x, signatures_y_pred)`
+- `dataloader_val`: the dataloader with the validation data. It needs to have the form `(signatures_x, data_x, signatures_y_pred)`
+- `dataloader_ts`: the dataloader with the test data. It needs to have the form `(signatures_x, data_x, signatures_y_pred)`
 
 
 
