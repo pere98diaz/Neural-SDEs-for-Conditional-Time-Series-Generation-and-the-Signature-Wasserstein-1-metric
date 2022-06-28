@@ -32,3 +32,6 @@ where
 - `architectures`: it indicates the number of hidden layers and how many neurons per layer for different feedforward neural networks. It is a dictionary with the following keys:
     - `initial`: list with the hidden architecture of the neural network that transforms the initial random noise into a part of the initial condition, $\xi_{\theta}^{2}: \mathbb{R}^{d_{v}} \to \mathbb{R}^{k}$.
     - `drift`: list with the hidden architecture of the neural network that serves as the drift of the SDE,  $f_{\theta}: [0,T] \times \mathbb{R}^{d_{z}} \to \mathbb{R}^{d_{z}}$.
+    - `diffusion`: list with the hidden architecture of the neural network that serves as the diffussion of the SDE,  $g_{\theta}: [0,T] \times \mathbb{R}^{d_{z}} \to \mathbb{R}^{d_{z} \times d_{w}}$.
+
+For example, `drift: [84, 84]` indicates that the drift is formed by two hidden layers of size 84 each. The dimension of the input and output layers is determined by a different hyperparameter, in this case $d_{z}$. 
