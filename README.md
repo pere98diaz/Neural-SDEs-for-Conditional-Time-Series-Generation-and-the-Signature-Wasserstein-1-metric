@@ -3,6 +3,30 @@ Fundamental Principles of Data Science, Master Thesis
 
 This repository provides all the code that was used in the development of the Final Master's thesis, submitted in partial fulfillment of the requirements for the degree of MSc in Fundamental Principles of Data Science.
 
+## Abstract
+
+Traditional time series forecasting approaches are usually focused on giving deter-
+ministic responses. Consequently, the models are not able to provide any uncer-
+tainty, which is a major shortcoming in many real world applications. On the other
+hand, (Conditional) Generative Adversarial Networks have found great success in
+recent years, due to their ability to approximate (conditional) distributions over ex-
+tremely high dimensional spaces. However, they are highly unstable and computa-
+tionally expensive to train, especially in the time series setting. Recently, it has been
+proposed to use the signature transform, a key object in rough path theory, that is
+able to convert the min-max formulation given by the (conditional) GAN framework
+into a classical minimization problem. However, this method is extremely expensive
+in terms of memory cost, sometimes even becoming prohibitive. To overcome this,
+we propose the use of neural stochastic differential equations, which have a constant
+memory cost as a function of depth, being way more memory efficient than tradi-
+tional deep learning architectures. We empirically test that this proposed model is
+more efficient than other classical approaches, both in terms of memory cost and
+computational time. We finally test its performance against other models, conclud-
+ing that in most cases it outperforms them.
+
+
+
+## The repository
+
 This repository provides several functions to define and train three models:
 
 - LSTM - WGAN: a conditional generative LSTM encoder-decoder type, trained as a (conditional) Wasserstein GAN (baseline 1)
