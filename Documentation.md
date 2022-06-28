@@ -111,8 +111,9 @@ G, C, G_optimizer, C_optimizer = train_wgan(C, G, dataloader_tr, hp, X_data, Y_d
 where it takes as arguments:
 - `C` and `G`: the critic and generator classes.
 - `dataloader_tr`: the dataloader with the training data. It needs to have the form `(data_x, data_y)`
-- `hp`: dictionary with the hyperparameters, with keys:         
-        - `C_optimizer, G_optimizer`: optimizer used for the Critic and the Generator, e.g. `torch.optim.RMSprop(G.parameters(), lr=1e-3, weight_decay=0.01)`.
+- `hp`: dictionary with the hyperparameters, with keys:  
+    - `C_optimizer, G_optimizer`: optimizer used for the Critic and the Generator, e.g. `torch.optim.RMSprop(G.parameters(), lr=1e-3, weight_decay=0.01)`.
+    - 
              
 
 
