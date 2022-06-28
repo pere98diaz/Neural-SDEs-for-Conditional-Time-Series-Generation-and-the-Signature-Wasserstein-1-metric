@@ -19,7 +19,7 @@ This repository is formed by five folders:
 - Forex: experiments carried out with data indicating the price between Euro and Dollar.
 - Resources cost: analysis of the training cost, both in terms of memory and computational time, for the three models, in terms of several factors.
 - lib: this folder contains all the necessary functions and classes used in the definition and training of the different algorithms. It is formed by .py files:
-      - 
+      - Baseline: 
 
 Each of the first three folders are divided into four folders:
 - There is one folder for each of the three models. Each one of them contains a Jupyter notebook, where it is shown how to define and train a model. There you can also find a pretrained model, which can be loaded in the notebook. Finally, the different metrics detailed in the memory are computed in the last part of the same notebook.
