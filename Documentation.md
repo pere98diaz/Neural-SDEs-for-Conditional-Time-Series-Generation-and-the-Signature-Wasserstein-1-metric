@@ -30,4 +30,4 @@ where
 - `initial_noise_size`: dimension of the initial random noise, $d_{v}$.
 - `hidden_size`: dimension of the hidden size of the SDE, $d_{z}$.
 - `architectures`: dictionary with the following keys:
-            - `initial`: 
+    - `initial`: 
