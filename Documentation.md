@@ -60,7 +60,7 @@ where:
 - `sep`: it indicates the length of the input path.
 
 ## The signature transform in the CSig-WGAN algorithm
-The signature transform is defined by using the following function.
+The signature transform is defined by using the following class.
 ```python
 from lib.Signature import Signature
 sig = Signature(depth, augmentations, data_size, interval, q, t_norm, normalization = None, signature = 'signature')
@@ -80,6 +80,22 @@ where
 - `signature`: whether to compute the signature or the log-signature.
 
 
+The estimation of the linear functional in the CSig-WGAN algorithm is performed by calling the following function.
+```python
+from lib.Signature import sig_lreg
+signatures_X, signatures_Y, signatures_Y_pred, sig_Y = sig_lreg(sig_X, sig_Y, data, batch_size, alpha=0.1, normalize_sig = True)
+```
+where it takes as arguments:
+- `sig_X` and `sig_Y`: Signature classes for the dependent and independent variables in the linear regression framework.
+- `data`: the dataset that will be used for the linear regression.
+- `batch_size`: batch size to use when computing the signatures of the data.
+- `alpha`: coefficient in the Ridge linear regression.
+- `normalize_sig`: whether to normalize the different channels of the signature to have mean zero and variance 1.
+
+and it returns:
+- `signatures_X, signatures_Y`: the computed signatures.
+- `signatures_Y_pred`: the predicted signatures of the output paths.
+- `sig_Y`: the `sig_Y` that was an argument when calling the function, but with the information about what are the values to apply the normalization.
 
 
 
