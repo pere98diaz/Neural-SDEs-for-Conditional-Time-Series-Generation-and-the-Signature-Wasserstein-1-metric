@@ -9,4 +9,4 @@ from lib.Baseline import ConditionalGenerator
 G = ConditionalGenerator(input_size, output_size, hidden_size, num_layers, noise_size, translation=False)
 ```
 where
-- 'input size': 
+- `input size`: 
