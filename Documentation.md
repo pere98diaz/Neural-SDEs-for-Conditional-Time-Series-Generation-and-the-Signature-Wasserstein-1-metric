@@ -105,9 +105,15 @@ Finally, we specify the functions that are needed to train the three models.
 To train the pure baseline model we need the following function.
 ```python
 from lib.Training_wgan import train_wgan
-G, C, G_optimizer, C_optimizer = train_wgan(C, G, dataloader_tr, hp, X_data, Y_data, G_optimizer, C_optimizer, max_time = None, device='cuda')
+G, C, G_optimizer, C_optimizer = train_wgan(C, G, dataloader_tr, hp, X_data, Y_data, G_optimizer, C_optimizer, max_time = None, 
+                                            device='cuda')
 ```
-
+where it takes as arguments:
+- `C` and `G`: the critic and generator classes.
+- `dataloader_tr`: the dataloader with the training data. It needs to have the form `(data_x, data_y)`
+- `hp`: dictionary with the hyperparameters,
+         `{'C_optimizer': C_optimizer, 'G_optimizer': G_optimizer, 'nsteps_pretrain': 10, 'gp_lambda': 10, 'steps_per_print': 250, 
+            'steps':10, 'nsteps_disc': 10, 'batch_size': 528}`
 
 
 
