@@ -29,5 +29,6 @@ where
 - `cvector_size`: number of dimensions of the initial hidden state of the SDE that depend are determined by the encoder, $d_{z}-k$.
 - `initial_noise_size`: dimension of the initial random noise, $d_{v}$.
 - `hidden_size`: dimension of the hidden size of the SDE, $d_{z}$.
-- `architectures`: dictionary with the following keys:
-    - `initial`: 
+- `architectures`: it indicates the number of hidden layers and how many neurons per layer for different feedforward neural networks. It is a dictionary with the following keys:
+    - `initial`: list with the architecture of the neural network that transforms the initial random noise into a part of the initial condition, $\xi_{\theta}^{2}: \mathbb{R}^{d_{v}} \to \mathbb{R}^{k}$.
+    - 
