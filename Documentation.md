@@ -36,6 +36,9 @@ where
 
    For example, `drift: [84, 84]` indicates that the drift is formed by two hidden layers of size 84 each. The dimension of the input and output layers is determined      by a different hyperparameter, in this case $d_{z}$. 
    
-- `t_norm`: if set to `None`, then the vector fields of the SDE do not depend on time. If set to a positive number, then it scales the variable `t` before sending it as input to the vector fields.
-- `noise_size`: if `noise_type` is set to `diagonal`, then this parameter is not used. If set to `general`, it indicates the dimension of the Brownian motion.
-- `noise_type`: 
+            - `t_norm`: if set to `None`, then the vector fields of the SDE do not depend on time. If set to a positive number, then it scales the variable `t` before sending it as input to the vector fields. Defaults to `None`.
+- `noise_size`: if `noise_type` is set to `diagonal`, then this parameter is not used. If set to `general`, it indicates the dimension of the Brownian motion. Defaults to `None`.
+- `noise_type`: if set to `diagonal`, the matrix of the diffusion is diagonal. If set to `general`, then the output matrix has general form. Defaults to `diagonal`.
+- `final_tanh`: whether to apply a final `tanh` to the final layer of the vector fields. Defaults to `False`.
+- `proj`: if set to `True`, then the output stream is obtained as a projection of the first dimensions of the SDE solution. If set to `False`, then a final readout lineartity is applied. Defaults to `False`.
+- `translation`: whether or not to apply a translation to the generated time series, so it's initial value is the final value of the input path. Defaults to `False`.
