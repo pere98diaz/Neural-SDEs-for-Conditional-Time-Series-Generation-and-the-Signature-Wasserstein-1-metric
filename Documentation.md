@@ -122,9 +122,41 @@ where it takes as arguments:
 - `C_optimizer`: optimizer used for the Critic e.g. `torch.optim.RMSprop(G.parameters(), lr=1e-3, weight_decay=0.01)`.
 - `G_optimizer`: optimizer used for the Generator.
 - `max_time`: maximum time, in hours, that the model is allowed to train. Defaults to `None`.
-- `device`: device where to carry out training. Defaults to `cuda`.
+- `device`: device where to carry out training. Defaults to `'cuda'`.
+
+and it returns:
+- `G, C`: the generator and the critic trained.
+- `G_optimizer, C_optimizer`: the final state of the optimizers, in case one wants to keep training the model.
           
-             
+### Training the LSTM CSig-WGAN
+To train the LSTM model with the CSig-WGAN algorithm we need the following functions, depending on the 
+```python
+from lib.Training_sigwgan import train_sigwgan
+G, G_optimizer = train_sigwgan(G, sig_Y, dataloader_tr, dataloader_val, dataloader_ts, hp, X_data, Y_data, G_optimizer, 
+                               patience=10000, epsilon=0, max_time = None, device='cuda')
+```
+where it takes as arguments:
+- `G`: generator class.
+- `sig_Y`: signature class, to compute the signatures of the generated samples.
+- `dataloader_tr`: the dataloader with the training data. It needs to have the form `(data_x, signatures_y_pred)`
+- `dataloader_val`: the dataloader with the validation data. It needs to have the form `(data_x, signatures_y_pred)`
+- `dataloader_ts`: the dataloader with the test data. It needs to have the form `(data_x, signatures_y_pred)`
+- `hp`: dictionary with the hyperparameters, with keys:  
+    - `nsamples_fs`: number of samples in the Montecarlo simulation.
+    - `steps_per_print`: number of steps per print of plots.
+    - `steps`: maximum number of steps performed.
+    - `batch_size`: batch size.
+- `X_data`, `Y_data`: the training dataset
+- `G_optimizer`: optimizer used for the Generator, e.g. `torch.optim.Adam(G.parameters(), lr=1e-3, weight_decay=0.01)`.
+- `patience`: number of steps allowed without improving the score in the validation set. Defaults to `10000`.
+- `epsilon`: minimum improvement in the early stopping criteria. Defaults to `0`.
+- `max_time`: maximum time, in hours, that the model is allowed to train. Defaults to `None`.
+- `device`: device where to carry out training. Defaults to `'cuda'`.
+
+and it returns:
+- `G`: the generator trained.
+- `G_optimizer`: the final state of the optimizer, in case one wants to keep training the model.
+
 
 
 
