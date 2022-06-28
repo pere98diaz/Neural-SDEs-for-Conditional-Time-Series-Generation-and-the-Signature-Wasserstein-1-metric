@@ -41,3 +41,4 @@ Each of the first three folders are divided into four folders:
 - There is one folder for each of the three models. Each one of them contains a Jupyter notebook, where it is shown how to define and train a model. There you can also find a pretrained model, which can be loaded in the notebook. Finally, the different metrics detailed in the memory are computed in the last part of the same notebook.
 - There is a folder for the data preprocessing, with the original data and the preprocessed data.
 
+Additionally, the file Documentation.md describes the different functions that are needed, as well as the arguments that they need.
