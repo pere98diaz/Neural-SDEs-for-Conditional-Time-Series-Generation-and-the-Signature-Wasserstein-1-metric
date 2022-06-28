@@ -24,6 +24,10 @@ G = SigNSDE(sig_size, data_size, cvector_size, initial_noise_size, hidden_size, 
             noise_size = None, noise_type = 'diagonal', final_tanh = False, proj = False, translation=False)
 ```
 where
-- `sig_size`: dimension of the truncated signature that serves as an encoder.
-- `data_size`: number of channels of the output time series.
-- `cvector_size`: number of dimensions of the initial hidden state of the SDE that depend are determined by the encoder, $a_{t}$
+- `sig_size`: dimension of the truncated signature that serves as an encoder, $d_{h}$.
+- `data_size`: number of channels of the output time series, $d_{y}$.
+- `cvector_size`: number of dimensions of the initial hidden state of the SDE that depend are determined by the encoder, $d_{z}-k$.
+- `initial_noise_size`: dimension of the initial random noise, $d_{v}$.
+- `hidden_size`: dimension of the hidden size of the SDE, $d_{z}$.
+- `architectures`: dictionary with the following keys:
+            - `initial`: 
