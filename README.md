@@ -9,4 +9,7 @@ This repository provides several functions to define and train three models:
 - LSTM - CSig-WGAN: a conditional generative LSTM encoder-decoder type, trained with the Conditional Signature-Wasserstein GAN algorithm (baseline 2)
 - NSDE - CSig-WGAN: a conditional neural stochastic differential equation, trained with the Conditional Signature-Wasserstein GAN algorithm (main model)
 
-The first model is a pure baseline formed by traditional deep learning architectures and the trained by the usual Wasserstein GAN algorithm
+The first model is a pure baseline formed by traditional deep learning architectures and the trained by the usual Wasserstein GAN algorithm.
+The second model is formed by the same generator as the baseline, but trained with the Conditional Signature-Wasserstein GAN algorithm. This allows us to see what is the pure gain of replacing the Wasserstein GAN framework for the CSig-WGAN.
+Finally, the third model is the one we propose to use in this thesis. It is formed by a NSDE as a generator, which are very memory efficient, and the CSig-WGAN as the training algorithm.
+
