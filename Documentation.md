@@ -21,7 +21,7 @@ The other generator is a conditional neural stochastic differential equation. In
 ```python
 from lib.NSDE import ConditionedGenerator
 G = ConditionalGenerator(data_size, cvector_size, initial_noise_size, hidden_size, architectures, t_norm=None, noise_size = None, 
-                 noise_type = 'diagonal', final_tanh = False, proj = False, translation=False)
+                         noise_type = 'diagonal', final_tanh = False, proj = False, translation=False)
 ```
 where
 
