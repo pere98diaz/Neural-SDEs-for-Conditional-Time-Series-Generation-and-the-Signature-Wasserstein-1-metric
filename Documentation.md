@@ -2,6 +2,7 @@
 
 ## The two generators
 
+### Baseline LSTM
 The baseline generator is formed by two LSTMs, one as the encoder and one as the generative decoder:
 
 ```python
@@ -16,6 +17,7 @@ where
 - `noise_size`: dimension of the random noise that serves as input in the generative process.
 - `translation`: whether or not to apply a translation to the generated time series, so it's initial value is the final value of the input path. Defaults to `False`.
 
+### Neural SDE
 The other generator is a conditional neural stochastic differential equation. In order to explain each hyperparameter of the function that it defines it, we will follow the notation of Definition 4.5 in the pdf memory.
 
 ```python
