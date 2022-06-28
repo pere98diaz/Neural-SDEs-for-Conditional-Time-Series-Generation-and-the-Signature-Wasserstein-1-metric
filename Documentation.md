@@ -98,7 +98,15 @@ and it returns:
 - `sig_Y`: the `sig_Y` that was an argument when calling the function, but with the information about what are the values to apply the normalization.
 
 
+## Training algorithms
+Finally, we specify the functions that are needed to train the three models.
 
+### Training the LSTM WGAN 
+To train the pure baseline model we need the following function.
+```python
+from lib.Training_wgan import train_wgan
+G, C, G_optimizer, C_optimizer = train_wgan(C, G, dataloader_tr, hp, X_data, Y_data, G_optimizer, C_optimizer, max_time = None, device='cuda')
+```
 
 
 
