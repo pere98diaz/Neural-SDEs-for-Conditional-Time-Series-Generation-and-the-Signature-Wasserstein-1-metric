@@ -35,3 +35,7 @@ where
     - `diffusion`: list with the hidden architecture of the neural network that serves as the diffussion of the SDE,  $g_{\theta}: [0,T] \times \mathbb{R}^{d_{z}} \to \mathbb{R}^{d_{z} \times d_{w}}$.
 
    For example, `drift: [84, 84]` indicates that the drift is formed by two hidden layers of size 84 each. The dimension of the input and output layers is determined      by a different hyperparameter, in this case $d_{z}$. 
+   
+- `t_norm`: if set to `None`, then the vector fields of the SDE do not depend on time. If set to a positive number, then it scales the variable `t` before sending it as input to the vector fields.
+- `noise_size`: if `noise_type` is set to `diagonal`, then this parameter is not used. Otherwise, it indicates the dimension of the Brownian motion.
+- `noise_type`: 
