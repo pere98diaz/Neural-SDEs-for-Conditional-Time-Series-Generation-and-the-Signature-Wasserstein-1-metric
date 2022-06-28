@@ -58,3 +58,45 @@ where:
 - `hidden_size`: list with two values, with the first one indicating the number of hidden dimensions of the first LSTM and the second one indicating the number of hidden dimensions of the second LSTM.
 - `num_layers`: list with two values, with the first one indicating the number of layers of the first LSTM and the second one indicating the number of layers of the second LSTM.
 - `sep`: it indicates the length of the input path.
+
+## The signature transform in the CSig-WGAN algorithm
+The signature transform is defined by using the following function.
+```python
+from lib.Signature import Signature
+sig = Signature(depth, augmentations, data_size, interval, q, t_norm, normalization = None, signature = 'signature')
+```
+where 
+- `depth`: depth at which to truncate the signature.
+- `augmentations`: a list indicating the augmentations that are performed to the stream before computing the signature. The list of augmentations is:
+     - `Cumsum`: applies the cumsum augmentation.
+     - `Cumsum2`: applies the cumsum augmentation keeping also the original stream.    
+     - `LeadLag`: appllies the LeadLag augmentation.
+   See \[1\] for a detailed description of these augmentations.
+- `data_size`: number of channels of the data, counting the time dimension.
+- `interval`: interval where to compute the signature.
+- `q`: it indicates the parameter for the number of hierarchical dyadic windows. See \[1\].
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# References
+
+\[1\] James Morrill and Adeline Fermanian and Patrick Kidger and Terry J. Lyons. "A Generalised Signature Method for Time Series". 2020. [[arXiv]]([https://arxiv.org/abs/2105.13493](https://arxiv.org/abs/2006.00873))
+
+
