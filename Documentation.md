@@ -112,8 +112,18 @@ where it takes as arguments:
 - `C` and `G`: the critic and generator classes.
 - `dataloader_tr`: the dataloader with the training data. It needs to have the form `(data_x, data_y)`
 - `hp`: dictionary with the hyperparameters, with keys:  
-    - `C_optimizer, G_optimizer`: optimizer used for the Critic and the Generator, e.g. `torch.optim.RMSprop(G.parameters(), lr=1e-3, weight_decay=0.01)`.
-    - 
+    - `nsteps_pretrain`: number of steps to pretrain the Critic.
+    - `gp_lambda`: value for the gradient penalty hyperparameter.
+    - `steps_per_print`: number of steps per print of plots.
+    - `steps`: maximum number of steps performed.
+    - `nsteps_disc`: number of steps of the critic per step of the generator.
+    - `batch_size`: batch size.
+- `X_data`, `Y_data`: the training dataset
+- `C_optimizer`: optimizer used for the Critic e.g. `torch.optim.RMSprop(G.parameters(), lr=1e-3, weight_decay=0.01)`.
+- `G_optimizer`: optimizer used for the Generator.
+- `max_time`: maximum time, in hours, that the model is allowed to train. Defaults to `None`.
+- `device`: device where to carry out training. Defaults to `cuda`.
+          
              
 
 
