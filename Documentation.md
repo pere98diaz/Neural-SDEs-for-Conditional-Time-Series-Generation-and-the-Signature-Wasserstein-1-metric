@@ -52,3 +52,9 @@ The critic in the Wasserstein GAN is formed by two LSTMs.
 from lib.Baseline import Critic
 C = Critic(input_size, hidden_size, num_layers, sep)
 ```
+
+where:
+- `input_size`: list with two values, with the first one indicating the number of channels of the input stream and the second one indicating the number of channels of the output stream.
+- `hidden_size`: list with two values, with the first one indicating the number of hidden dimensions of the first LSTM and the second one indicating the number of hidden dimensions of the second LSTM.
+- `num_layers`: list with two values, with the first one indicating the number of layers of the first LSTM and the second one indicating the number of layers of the second LSTM.
+- `sep`: it indicates the length of the input path.
