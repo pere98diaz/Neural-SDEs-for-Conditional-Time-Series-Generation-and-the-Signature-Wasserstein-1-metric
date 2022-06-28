@@ -71,10 +71,10 @@ where
      - `Cumsum`: applies the cumsum augmentation.
      - `Cumsum2`: applies the cumsum augmentation keeping also the original stream.    
      - `LeadLag`: appllies the LeadLag augmentation.
-   See \[1\] for a detailed description of these augmentations.
+   See [\[1\]](https://arxiv.org/abs/2006.00873) for a detailed description of these augmentations.
 - `data_size`: number of channels of the data, counting the time dimension.
 - `interval`: interval where to compute the signature.
-- `q`: it indicates the parameter for the number of hierarchical dyadic windows. See \[1\].
+- `q`: it indicates the parameter for the number of hierarchical dyadic windows. See [\[1\]](https://arxiv.org/abs/2006.00873).
 
 
 
@@ -97,6 +97,6 @@ where
 
 # References
 
-\[1\] James Morrill and Adeline Fermanian and Patrick Kidger and Terry J. Lyons. "A Generalised Signature Method for Time Series". 2020. [[arXiv]]([https://arxiv.org/abs/2105.13493](https://arxiv.org/abs/2006.00873))
+\[1\] James Morrill and Adeline Fermanian and Patrick Kidger and Terry J. Lyons. "A Generalised Signature Method for Time Series". 2020. [[arXiv]](https://arxiv.org/abs/2006.00873)
 
 
