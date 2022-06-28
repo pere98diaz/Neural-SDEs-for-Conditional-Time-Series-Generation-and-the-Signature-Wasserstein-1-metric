@@ -75,7 +75,9 @@ where
 - `data_size`: number of channels of the data, counting the time dimension.
 - `interval`: interval where to compute the signature.
 - `q`: it indicates the parameter for the number of hierarchical dyadic windows. See [\[1\]](https://arxiv.org/abs/2006.00873).
-
+- `t_norm`: factor that escalates the time dimension before computing the signature. to prevent very large values.
+- `normalization`: a dictionary with two keys, `mean` and `std`, which applies the normalization to each dimension of the signature. If set to `None`, then no normalization is applied. Defaults to `None`.
+- `signature`: whether to compute the signature or the log-signature.
 
 
 
