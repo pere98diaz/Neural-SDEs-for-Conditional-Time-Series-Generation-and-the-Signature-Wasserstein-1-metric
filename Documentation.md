@@ -44,3 +44,11 @@ where
 - `final_tanh`: whether to apply a final `tanh` to the final layer of the vector fields. Defaults to `False`.
 - `proj`: if set to `True`, then the output stream is obtained as a projection of the first dimensions of the SDE solution. If set to `False`, then a final readout lineartity is applied. Defaults to `False`.
 - `translation`: whether or not to apply a translation to the generated time series, so it's initial value is the final value of the input path. Defaults to `False`.
+
+
+## The critic in the Wasserstein GAN 
+The critic in the Wasserstein GAN is formed by two LSTMs.
+```python
+from lib.Baseline import Critic
+C = Critic(input_size, hidden_size, num_layers, sep)
+```
