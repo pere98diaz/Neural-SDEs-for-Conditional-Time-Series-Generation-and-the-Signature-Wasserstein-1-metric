@@ -112,9 +112,11 @@ where it takes as arguments:
 - `C` and `G`: the critic and generator classes.
 - `dataloader_tr`: the dataloader with the training data. It needs to have the form `(data_x, data_y)`
 - `hp`: dictionary with the hyperparameters:
+- 
             -`{'C_optimizer': C_optimizer, 'G_optimizer': G_optimizer, 'nsteps_pretrain': 10, 'gp_lambda': 10, 'steps_per_print': 250, 
                'steps':10, 'nsteps_disc': 10, 'batch_size': 528}`
          where:
+         
             - `C_optimizer, G_optimizer`: optimizer used for the Critic and the Generator, e.g. `torch.optim.RMSprop(G.parameters(), lr=1e-3, weight_decay=0.01)`.
             - 
 
