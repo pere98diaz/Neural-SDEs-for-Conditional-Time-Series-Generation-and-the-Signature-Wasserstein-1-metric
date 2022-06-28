@@ -19,7 +19,15 @@ This repository is formed by five folders:
 - Forex: experiments carried out with data indicating the price between Euro and Dollar.
 - Resources cost: analysis of the training cost, both in terms of memory and computational time, for the three models, in terms of several factors.
 - lib: this folder contains all the necessary functions and classes used in the definition and training of the different algorithms. It is formed by .py files:
-      - Baseline: 
+    - Baseline.py: it contains the classes for the LSTM based models
+    - NSDE.py it contains the classes for the NSDE based model
+    - Signature.py: it contains the code for all the signature-related classes and functions.
+    - Utilities.py: it contains different functions that are used through the different models.
+    - Training_wgan.py: it contains the function that trains the LSTM WGAN model.
+    - Training_sigwgan.py: it contains the function that trains the LSTM CSig-WGAN model.
+    - Training_NSDE_sigwgan.py: it contains the function that trains the NSDE CSig-WGAN model.
+    - Metrics.py: it contains the code used to evaluate the performance of the different models.
+
 
 Each of the first three folders are divided into four folders:
 - There is one folder for each of the three models. Each one of them contains a Jupyter notebook, where it is shown how to define and train a model. There you can also find a pretrained model, which can be loaded in the notebook. Finally, the different metrics detailed in the memory are computed in the last part of the same notebook.
