@@ -5,7 +5,7 @@ from time import time
 
 
 def train_sigwgan(G, sig_Y, dataloader_tr, dataloader_val, dataloader_ts, hp, signatures_X, X_data, Y_data, 
-                  G_optimizer, patience=10000, epsilon=0, max_time=None, device='cuda'):
+                  G_optimizer, patience=10000, epsilon=0, max_time=None, device='cuda', output_size=1):
     
 
     start_time = time()
@@ -48,7 +48,7 @@ def train_sigwgan(G, sig_Y, dataloader_tr, dataloader_val, dataloader_ts, hp, si
 
         if (step % hp['steps_per_print']) == 0 or step == hp['steps'] - 1:
 
-            plot(G, X_data, Y_data, signatures_X, 10)
+            plot(G, X_data, Y_data, signatures_X, 10, output_size)
 
 
             train_loss = evaluate_loss_sigWGAN(dataloader_tr, sig_Y, G, q, hp['nsamples_fs'], device)

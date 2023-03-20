@@ -5,7 +5,7 @@ from time import time
 from lib.Utilities import plot_baseline as plot, get_n_params
 
 
-def train_wgan(C, G, dataloader_tr, hp, X_data, Y_data, G_optimizer, C_optimizer, max_time = None, device='cuda'):
+def train_wgan(C, G, dataloader_tr, hp, X_data, Y_data, G_optimizer, C_optimizer, output_size = 1, max_time = None, device='cuda'):
     
     start_time = time()
     infinite_dataloader = (elem for it in iter(lambda: dataloader_tr, None) for elem in it)
@@ -82,7 +82,7 @@ def train_wgan(C, G, dataloader_tr, hp, X_data, Y_data, G_optimizer, C_optimizer
         del batch_x, batch_y_real, batch_y_fake, batch_fake
         
         if (step % hp['steps_per_print']) == 0 or step == hp['steps_per_print'] - 1:    
-            plot(G, X_data, Y_data, hp['nsamples_fs'])
+            plot(G, X_data, Y_data, hp['nsamples_fs'], output_size)
          
             loss, gscore, rscore = evaluate_loss_wgan(dataloader_tr, C, G, device)
             trange.write(f"Step: {step:3} Loss: {loss:.4f} G. score: {gscore:.4f} R. score: {rscore:.4f} GP: {gp:.4f}" )

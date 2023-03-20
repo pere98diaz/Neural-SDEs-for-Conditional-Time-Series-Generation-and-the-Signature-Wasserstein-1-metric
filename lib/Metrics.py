@@ -6,6 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from scipy.stats import wasserstein_distance
+from torch.utils.data import TensorDataset, DataLoader
 
 
 def generate_fakedata(G, x, y, sig_X = None, generator = 'lstm'):
@@ -130,32 +131,50 @@ class Evaluator(torch.nn.Module):
         return out
     
     
-def acf_metric(x, y, G, k, sig_X = None, generator='lstm'):
+import statsmodels.api as sm
+
+def acf_metric(x, y, G, max_lag=5, generator='lstm', sig_X = None):
+    
     with torch.no_grad():
         if generator == 'lstm':
             y_fake = G(x, y.shape[1]-1)
         elif generator == 'nsde':
             y_fake = G(sig_X, x, y.shape[1]-1)
+    
+    acf_real = []
+    acf_fake = []
+    acf_l2dif = []
+    for k in range(x.shape[0]):
+        acf_real.append(sm.tsa.acf(y[k, :, 0], nlags = max_lag).tolist())
+        acf_fake.append(sm.tsa.acf(y_fake[k, :, 0], nlags = max_lag).tolist())
+        acf_l2dif.append(np.linalg.norm(np.array(acf_real[-1])-np.array(acf_fake[-1]), ord=1))
+    return np.array(acf_real), np.array(acf_fake), np.mean(np.array(acf_l2dif)) 
+
+def ccf_metric(x, y, G, max_lag=5, generator='lstm', sig_X = None):
+    
+    with torch.no_grad():
+        if generator == 'lstm':
+            y_fake = G(x, y.shape[1]-1)
+        elif generator == 'nsde':
+            y_fake = G(sig_X, x, y.shape[1]-1)
+    
+    l1_error = []
+    for k in range(x.shape[0]):
+        ccf_real = np.array(sm.tsa.ccf(y[k, :, 0], y[k, :, 1], adjusted=True).tolist()[:(max_lag+1)])
+        ccf_fake = np.array(sm.tsa.ccf(y_fake[k, :, 0], y_fake[k, :, 1], adjusted=True).tolist()[:(max_lag+1)])
+
+        acf_real_1 = np.array(sm.tsa.acf(y[k, :, 0], nlags = max_lag).tolist())
+        acf_fake_1 = np.array(sm.tsa.acf(y_fake[k, :, 0], nlags = max_lag).tolist())
+
+        acf_real_2 = np.array(sm.tsa.acf(y[k, :, 1], nlags = max_lag).tolist())
+        acf_fake_2 = np.array(sm.tsa.acf(y_fake[k, :, 1], nlags = max_lag).tolist())
+
+        ccm_real = np.stack([ccf_real, acf_real_1, acf_real_2]).flatten()
+        ccm_fake = np.stack([ccf_fake, acf_fake_1, acf_fake_2]).flatten()
+    
+        l1_error.append(np.linalg.norm(ccm_real-ccm_fake, ord=1))
         
-    acf_fake, acf_real = np.zeros(k), np.zeros(k)        
-    for i in range(k):
-        acf_fake[i] = np.cov(y_fake[:, 0, 0], y_fake[:, i, 0])[1,0]/np.cov(y_fake[:, 0, 0], y_fake[:, 0, 0])[0,0]
-        acf_real[i] = np.cov(y[:, 0, 0], y[:, i, 0])[1,0]/np.cov(y[:, 0, 0], y[:, 0, 0])[0,0]
-    
-    acf_metric = np.mean(np.abs(acf_fake-acf_real))
-    
-    print(f"ACF metric: {acf_metric:.4f}")
-    
-    plt.rcParams['figure.figsize'] = [6, 4]
-    plt.plot(acf_fake, label='fake')
-    plt.plot(acf_real, label='real')
-    plt.legend()
-    plt.show()
-    
-    return acf_fake, acf_real   
-
-
-
+    return np.mean(l1_error)
 
 
 
@@ -322,7 +341,7 @@ def precision_c(pred, real):
 
 
 
-def distribution_metric(x, y, G, sig_X = None, generator='lstm', log = False, inc=False, stats=None):
+def distribution_metric(x, y, G, sig_X = None, generator='lstm', log = False, inc=False, stats=None, print_=True):
     with torch.no_grad():
         if generator == 'lstm':
             y_fake = G(x, y.shape[1]-1)
@@ -345,54 +364,55 @@ def distribution_metric(x, y, G, sig_X = None, generator='lstm', log = False, in
     y_fake_dif_min = torch.min(y_fake_dif, dim=1)[0].squeeze(1).cpu().numpy()
     
     
-    plt.rcParams['figure.figsize'] = [12, 8]
-    fig, axs = plt.subplots(2,2)
-
-    _, bins, _ =  axs[0,0].hist(y_real_flatten, bins=64, alpha=0.7, label='Real', color='dodgerblue',
+    if print_:
+        plt.rcParams['figure.figsize'] = [12, 8]
+        fig, axs = plt.subplots(2,2)
+    
+        _, bins, _ =  axs[0,0].hist(y_real_flatten, bins=64, alpha=0.7, label='Real', color='dodgerblue',
+                                              density=True)
+    
+        axs[0,0].hist(y_fake_flatten, bins=64, alpha=0.7, label='Generated', color='crimson',
+                                 density=True)
+        axs[0,0].legend(fontsize=12)
+        axs[0,0].set_xlabel('Value', fontsize=12)
+        axs[0,0].set_ylabel('Density', fontsize=12)
+        axs[0,0].set_title('Distributions of the unordered data values')
+        
+    
+    
+        _, bins, _ = axs[0,1].hist(y_real_dif_flatten, bins=64, alpha=0.7, label='Real', color='dodgerblue',
                                           density=True)
-
-    axs[0,0].hist(y_fake_flatten, bins=64, alpha=0.7, label='Generated', color='crimson',
-                             density=True)
-    axs[0,0].legend(fontsize=12)
-    axs[0,0].set_xlabel('Value', fontsize=12)
-    axs[0,0].set_ylabel('Density', fontsize=12)
-    axs[0,0].set_title('Distributions of the unordered data values')
+        axs[0,1].hist(y_fake_dif_flatten, bins=64, alpha=0.7, label='Generated', color='crimson',
+                                 density=True)
+        axs[0,1].legend(fontsize=12)
+        axs[0,1].set_xlabel('Value', fontsize=12)
+        axs[0,1].set_ylabel('Density', fontsize=12)
+        axs[0,1].set_title('Distributions of the unordered differences data values')
+        
+        _, bins, _ =  axs[1,0].hist(y_real_dif_max, bins=64, alpha=0.7, label='Real', color='dodgerblue',
+                                              density=True)
     
-
-
-    _, bins, _ = axs[0,1].hist(y_real_dif_flatten, bins=64, alpha=0.7, label='Real', color='dodgerblue',
-                                      density=True)
-    axs[0,1].hist(y_fake_dif_flatten, bins=64, alpha=0.7, label='Generated', color='crimson',
-                             density=True)
-    axs[0,1].legend(fontsize=12)
-    axs[0,1].set_xlabel('Value', fontsize=12)
-    axs[0,1].set_ylabel('Density', fontsize=12)
-    axs[0,1].set_title('Distributions of the unordered differences data values')
+        axs[1,0].hist(y_fake_dif_max, bins=64, alpha=0.7, label='Generated', color='crimson',
+                                 density=True)
+        axs[1,0].legend(fontsize=12)
+        axs[1,0].set_xlabel('Value', fontsize=12)
+        axs[1,0].set_ylabel('Density', fontsize=12)
+        axs[1,0].set_title('Distributions of the max')
+        
     
-    _, bins, _ =  axs[1,0].hist(y_real_dif_max, bins=64, alpha=0.7, label='Real', color='dodgerblue',
+    
+        _, bins, _ = axs[1,1].hist(y_real_dif_min, bins=64, alpha=0.7, label='Real', color='dodgerblue',
                                           density=True)
-
-    axs[1,0].hist(y_fake_dif_max, bins=64, alpha=0.7, label='Generated', color='crimson',
-                             density=True)
-    axs[1,0].legend(fontsize=12)
-    axs[1,0].set_xlabel('Value', fontsize=12)
-    axs[1,0].set_ylabel('Density', fontsize=12)
-    axs[1,0].set_title('Distributions of the max')
+        axs[1,1].hist(y_fake_dif_min, bins=64, alpha=0.7, label='Generated', color='crimson',
+                                 density=True)
+        axs[1,1].legend(fontsize=12)
+        axs[1,1].set_xlabel('Value', fontsize=12)
+        axs[1,1].set_ylabel('Density', fontsize=12)
+        axs[1,1].set_title('Distributions of the min')
+        
     
-
-
-    _, bins, _ = axs[1,1].hist(y_real_dif_min, bins=64, alpha=0.7, label='Real', color='dodgerblue',
-                                      density=True)
-    axs[1,1].hist(y_fake_dif_min, bins=64, alpha=0.7, label='Generated', color='crimson',
-                             density=True)
-    axs[1,1].legend(fontsize=12)
-    axs[1,1].set_xlabel('Value', fontsize=12)
-    axs[1,1].set_ylabel('Density', fontsize=12)
-    axs[1,1].set_title('Distributions of the min')
-    
-
-    plt.tight_layout()
-    plt.show()
+        plt.tight_layout()
+        plt.show()
     
     w_f = wasserstein_distance(y_fake_flatten, y_real_flatten)
     w_d = wasserstein_distance(y_fake_dif_flatten, y_real_dif_flatten)
@@ -421,29 +441,29 @@ def distribution_metric(x, y, G, sig_X = None, generator='lstm', log = False, in
         y_fake_unn_inc_min = torch.min(y_fake_unn_inc, dim=1)[0].squeeze(1).cpu().numpy()
         
     
+        if print_:
+            plt.rcParams['figure.figsize'] = [12, 4]
+            fig, axs = plt.subplots(1, 2)
+            
+            _, bins, _ =  axs[0].hist(y_real_unn_inc_max, bins=64, alpha=0.7, label='Real', color='dodgerblue',
+                                                  density=True)
+            
+            axs[0].hist(y_fake_unn_inc_max, bins=64, alpha=0.7, label='Generated', color='crimson',
+                                         density=True)
+            axs[0].legend(fontsize=12)
+            axs[0].set_xlabel('Value', fontsize=12)
+            axs[0].set_ylabel('Density', fontsize=12)
+            axs[0].set_title('Distributions of the maximum increments')
     
-        plt.rcParams['figure.figsize'] = [12, 4]
-        fig, axs = plt.subplots(1, 2)
         
-        _, bins, _ =  axs[0].hist(y_real_unn_inc_max, bins=64, alpha=0.7, label='Real', color='dodgerblue',
-                                              density=True)
-        
-        axs[0].hist(y_fake_unn_inc_max, bins=64, alpha=0.7, label='Generated', color='crimson',
-                                     density=True)
-        axs[0].legend(fontsize=12)
-        axs[0].set_xlabel('Value', fontsize=12)
-        axs[0].set_ylabel('Density', fontsize=12)
-        axs[0].set_title('Distributions of the maximum increments')
-
-    
-        _, bins, _ = axs[1].hist(y_real_unn_inc_min, bins=64, alpha=0.7, label='Real', color='dodgerblue',
-                                              density=True)
-        axs[1].hist(y_fake_unn_inc_min, bins=64, alpha=0.7, label='Generated', color='crimson',
-                                     density=True)
-        axs[1].legend(fontsize=12)
-        axs[1].set_xlabel('Value', fontsize=12)
-        axs[1].set_ylabel('Density', fontsize=12)
-        axs[1].set_title('Distributions of the minimum increments')
+            _, bins, _ = axs[1].hist(y_real_unn_inc_min, bins=64, alpha=0.7, label='Real', color='dodgerblue',
+                                                  density=True)
+            axs[1].hist(y_fake_unn_inc_min, bins=64, alpha=0.7, label='Generated', color='crimson',
+                                         density=True)
+            axs[1].legend(fontsize=12)
+            axs[1].set_xlabel('Value', fontsize=12)
+            axs[1].set_ylabel('Density', fontsize=12)
+            axs[1].set_title('Distributions of the minimum increments')
         
         w_max_inc = wasserstein_distance(y_real_unn_inc_max, y_fake_unn_inc_max)
         w_min_inc = wasserstein_distance(y_real_unn_inc_min, y_fake_unn_inc_min)
@@ -451,7 +471,42 @@ def distribution_metric(x, y, G, sig_X = None, generator='lstm', log = False, in
         print(f"The Wasserstein-1 distance between the real and generated min increments distributions is {w_min_inc:.4f}")
 
 
+def bi_distribution_metric(x, y, G, sig_X = None, generator='lstm'):
+    with torch.no_grad():
+        if generator == 'lstm':
+            y_fake = G(x, y.shape[1]-1)
+        elif generator == 'nsde':
+            y_fake = G(sig_X, x, y.shape[1]-1)
+            
+    y_fake_flatten = torch.flatten(y_fake[:, 1:, :], start_dim=0, end_dim=-2).to('cpu').numpy()
+    y_real_flatten = torch.flatten(y[:, 1:, :], start_dim=0, end_dim=-2).to('cpu').numpy()
+    y_dif = y - y[:, :1, :]
+    y_dif = y_dif[:, 1:, :]
+    
+    y_fake_dif = y_fake - y_fake[:, :1, :]
+    y_fake_dif = y_fake_dif[:, 1:, :]
+    y_fake_dif_flatten = torch.flatten(y_fake_dif, start_dim=0, end_dim=-2).to('cpu').numpy()
+    y_real_dif_flatten = torch.flatten(y_dif, start_dim=0, end_dim=-2).to('cpu').numpy()
+    
+    y_real_dif_max = torch.max(y_dif, dim=1)[0].squeeze(1).cpu().numpy()
+    y_real_dif_min = torch.min(y_dif, dim=1)[0].squeeze(1).cpu().numpy()
 
+    y_fake_dif_max = torch.max(y_fake_dif, dim=1)[0].squeeze(1).cpu().numpy()
+    y_fake_dif_min = torch.min(y_fake_dif, dim=1)[0].squeeze(1).cpu().numpy()
+    
+    w_f, w_d, w_max, w_min = [], [], [], []
+    for d in range(y.shape[2]):
+        w_f.append(wasserstein_distance(y_fake_flatten[:,d], y_real_flatten[:,d]))
+        w_d.append(wasserstein_distance(y_fake_dif_flatten[:,d], y_real_dif_flatten[:,d]))
+        w_max.append(wasserstein_distance(y_fake_dif_max[:,d], y_real_dif_max[:,d]))
+        w_min.append(wasserstein_distance(y_fake_dif_min[:,d], y_real_dif_min[:,d]))
+
+    w_f, w_d, w_max, w_min = np.mean(w_f), np.mean(w_d), np.mean(w_max), np.mean(w_min)
+    
+    print(f"The Wasserstein-1 distance between the real and generated distributions is {w_f:.4f}")
+    print(f"The Wasserstein-1 distance between the real and generated difference distributions is {w_d:.4f}")
+    print(f"The Wasserstein-1 distance between the real and generated max distributions is {w_max:.4f}")
+    print(f"The Wasserstein-1 distance between the real and generated min distributions is {w_min:.4f}")
 
     
 from lib.Signature import Signature, Basepoint,sig_lreg
@@ -494,5 +549,33 @@ def signature_metric(data, G, depth_x, depth_y, batch_size, nsamples_fs, generat
     print(f"The signature-wasserstein metric loss is {loss:.4f}")
       
 
-
+def generate_fakedata_2(G, x, y, sig_X = None, generator = 'lstm', batch_size=528):
+    
+    if generator == 'nsde':
+        dataset = TensorDataset(sig_X, x, y)
+        dataloader = DataLoader(dataset, batch_size, shuffle=False)
+        
+        data_y_fake = []
+        for batch in dataloader:
+            sig_X_batch, data_x_batch, data_y_batch = batch
+            with torch.no_grad():
+                y_fake_batch = G(sig_X_batch.to('cpu'), data_x_batch.to('cpu'), data_y_batch.shape[1]-1)
+                data_y_fake.append(y_fake_batch)
+                
+        data_y_fake = torch.cat(data_y_fake, dim=0)
+    
+    else:
+        dataset = TensorDataset(x, y)
+        dataloader = DataLoader(dataset, batch_size, shuffle=False)
+        
+        data_y_fake = []
+        for batch in dataloader:
+            data_x_batch, data_y_batch = batch
+            with torch.no_grad():
+                y_fake_batch = G(data_x_batch.to('cpu'), data_y_batch.shape[1]-1)
+                data_y_fake.append(y_fake_batch)
+                
+        data_y_fake = torch.cat(data_y_fake, dim=0)
+            
+    return data_y_fake.float()
 

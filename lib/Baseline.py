@@ -12,6 +12,7 @@ class Encoder(torch.nn.Module):
         )
 
     def forward(self, x):
+    
         r_out_1, (h_n, h_c) = self.lstm(x, None)
         return torch.transpose(h_n, 0, 1), torch.transpose(h_c, 0, 1)
     

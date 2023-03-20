@@ -128,7 +128,8 @@ class ConditionedGenerator(torch.nn.Module):
             ys = hs[:, :, :self._data_size]
         elif self._translation:
             ys_pre = self._readout(hs)
-            ys = ys_pre - ys_pre[:, :1, :] + y0.unsqueeze(2)
+            
+            ys = ys_pre - ys_pre[:, :1, :] + y0.unsqueeze(1)
         else:
             ys = torch.cat([y0.unsqueeze(1), self._readout(hs)], dim=1)
        
